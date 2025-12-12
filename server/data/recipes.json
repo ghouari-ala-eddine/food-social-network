@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "title": "x",
+      "description": "c",
+      "ingredients": [
+        "s"
+      ],
+      "instructions": [
+        "s"
+      ],
+      "cookTime": "2",
+      "servings": 2,
+      "difficulty": "Medium",
+      "image": "",
+      "author": 1,
+      "likes": [],
+      "createdAt": "2025-12-12T01:49:01.901Z",
+      "updatedAt": "2025-12-12T01:49:01.901Z",
+      "id": 1
+    }
+  ],
+  "counter": 2
+}

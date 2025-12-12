@@ -1,41 +1,58 @@
 const fs = require('fs');
 const path = require('path');
 
+// In-memory cache for all collections (fallback when file system fails)
+const memoryCache = {};
+
 // Directory to store JSON data files
 const DATA_DIR = path.join(__dirname, '../data');
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+// Try to create data directory
+try {
+    if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+} catch (error) {
+    console.log('Data directory creation failed, using memory-only mode');
 }
 
 // Get file path for a collection
 const getFilePath = (collection) => path.join(DATA_DIR, `${collection}.json`);
 
-// Read data from JSON file
-const readData = (collection) => {
-    const filePath = getFilePath(collection);
-    try {
-        if (fs.existsSync(filePath)) {
-            const data = fs.readFileSync(filePath, 'utf8');
-            return JSON.parse(data);
+// Initialize memory cache for a collection
+const initCache = (collection) => {
+    if (!memoryCache[collection]) {
+        memoryCache[collection] = { items: [], counter: 1 };
+        // Try to load from file
+        try {
+            const filePath = getFilePath(collection);
+            if (fs.existsSync(filePath)) {
+                const data = fs.readFileSync(filePath, 'utf8');
+                memoryCache[collection] = JSON.parse(data);
+            }
+        } catch (error) {
+            console.log(`Using memory cache for ${collection}`);
         }
-    } catch (error) {
-        console.error(`Error reading ${collection}:`, error.message);
     }
-    return { items: [], counter: 1 };
+    return memoryCache[collection];
 };
 
-// Write data to JSON file
+// Read data from cache (with file fallback)
+const readData = (collection) => {
+    return initCache(collection);
+};
+
+// Write data to cache and try to persist to file
 const writeData = (collection, data) => {
-    const filePath = getFilePath(collection);
+    memoryCache[collection] = data;
     try {
+        const filePath = getFilePath(collection);
         fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-        return true;
     } catch (error) {
-        console.error(`Error writing ${collection}:`, error.message);
-        return false;
+        // File write failed, but data is in memory cache
+        console.log(`File write failed for ${collection}, data is in memory`);
     }
+    return true;
 };
 
 // Get all items from a collection

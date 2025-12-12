@@ -1,4 +1,27 @@
 {
-  "items": [],
-  "counter": 1
+  "items": [
+    {
+      "username": "kamal_gh.94",
+      "email": "jjyw3vazr6@mkzaso.com",
+      "password": "$2b$10$MHZRqW5B2COtKIezt49.Jewc/UAmEIywgWHgGo8YeWlNpp.me4Ps2",
+      "accountType": "user",
+      "profilePicture": "",
+      "bio": "",
+      "followers": [],
+      "following": [],
+      "restaurantName": "",
+      "description": "",
+      "address": "",
+      "phone": "",
+      "location": null,
+      "openingHours": "",
+      "cuisine": [],
+      "averageRating": 0,
+      "totalRatings": 0,
+      "createdAt": "2025-12-12T01:48:40.131Z",
+      "updatedAt": "2025-12-12T01:48:40.131Z",
+      "id": 1
+    }
+  ],
+  "counter": 2
 }
