@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { MessageCircle, Search } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Messages = () => {
     const { user } = useContext(AuthContext);
@@ -21,7 +22,7 @@ const Messages = () => {
     const fetchConversations = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/messages/conversations', {
+            const res = await axios.get(`${API_URL}/messages/conversations`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setConversations(res.data);

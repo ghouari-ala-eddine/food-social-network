@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { MapPin, Phone, Star, MessageCircle, Calendar, X } from 'lucide-react';
+import { API_URL } from '../config';
 
 const RestaurantProfile = () => {
     const { id } = useParams();
@@ -31,7 +32,7 @@ const RestaurantProfile = () => {
 
     const fetchRestaurant = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/users/${id}`);
+            const res = await axios.get(`${API_URL}/users/${id}`);
             setRestaurant(res.data);
         } catch (err) {
             console.error('Failed to load restaurant:', err);
@@ -42,7 +43,7 @@ const RestaurantProfile = () => {
 
     const fetchMenu = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/menu/restaurant/${id}`);
+            const res = await axios.get(`${API_URL}/menu/restaurant/${id}`);
             setMenu(res.data);
         } catch (err) {
             console.error('Failed to load menu:', err);
@@ -51,7 +52,7 @@ const RestaurantProfile = () => {
 
     const fetchRatings = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/ratings/restaurant/${id}`);
+            const res = await axios.get(`${API_URL}/ratings/restaurant/${id}`);
             setRatings(res.data);
         } catch (err) {
             console.error('Failed to load ratings:', err);
@@ -67,7 +68,7 @@ const RestaurantProfile = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/ratings', {
+            await axios.post(`${API_URL}/ratings`, {
                 restaurantId: parseInt(id),
                 rating: newRating,
                 review: newReview
@@ -95,7 +96,7 @@ const RestaurantProfile = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/reservations', {
+            await axios.post(`${API_URL}/reservations`, {
                 restaurantId: parseInt(id),
                 date: reservationDate,
                 time: reservationTime,
@@ -283,8 +284,8 @@ const RestaurantProfile = () => {
                         <button
                             onClick={() => setActiveTab('menu')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'menu'
-                                    ? 'border-orange-500 text-orange-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-orange-500 text-orange-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             Menu
@@ -292,8 +293,8 @@ const RestaurantProfile = () => {
                         <button
                             onClick={() => setActiveTab('reviews')}
                             className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'reviews'
-                                    ? 'border-orange-500 text-orange-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-orange-500 text-orange-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 }`}
                         >
                             Reviews

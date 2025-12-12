@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Calendar, Clock, Users, MapPin, X, Check } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Reservations = () => {
     const { user } = useContext(AuthContext);
@@ -21,7 +22,7 @@ const Reservations = () => {
     const fetchReservations = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/reservations/user', {
+            const res = await axios.get(`${API_URL}/reservations/user`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setReservations(res.data);
@@ -39,7 +40,7 @@ const Reservations = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/reservations/${id}`, {
+            await axios.delete(`${API_URL}/reservations/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchReservations();

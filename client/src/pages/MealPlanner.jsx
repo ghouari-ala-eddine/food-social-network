@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { Calendar, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { API_URL } from '../config';
 
 const MealPlanner = () => {
     const { user } = useContext(AuthContext);
@@ -53,7 +54,7 @@ const MealPlanner = () => {
             const startDate = formatDate(weekDates[0]);
             const endDate = formatDate(weekDates[6]);
 
-            const res = await axios.get(`http://localhost:5000/api/meal-plan?startDate=${startDate}&endDate=${endDate}`, {
+            const res = await axios.get(`${API_URL}/meal-plan?startDate=${startDate}&endDate=${endDate}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -73,7 +74,7 @@ const MealPlanner = () => {
 
     const fetchRecipes = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/recipes');
+            const res = await axios.get(`${API_URL}/recipes`);
             setRecipes(res.data);
         } catch (err) {
             console.error('Failed to load recipes');
@@ -83,7 +84,7 @@ const MealPlanner = () => {
     const addMeal = async (date, mealType, recipeId) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/meal-plan', {
+            await axios.post(`${API_URL}/meal-plan`, {
                 date: formatDate(date),
                 mealType,
                 recipeId
@@ -100,7 +101,7 @@ const MealPlanner = () => {
     const removeMeal = async (mealPlanId) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/meal-plan/${mealPlanId}`, {
+            await axios.delete(`${API_URL}/meal-plan/${mealPlanId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchMealPlan();
@@ -235,8 +236,8 @@ const MealPlanner = () => {
                                                 <div className="flex items-center space-x-4 mt-1 text-xs text-gray-500">
                                                     {recipe.cookTime && <span>{recipe.cookTime} min</span>}
                                                     <span className={`px-2 py-0.5 rounded ${recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
-                                                            recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                                                'bg-red-100 text-red-800'
+                                                        recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                            'bg-red-100 text-red-800'
                                                         }`}>
                                                         {recipe.difficulty}
                                                     </span>

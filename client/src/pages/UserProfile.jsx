@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { Mail, Calendar, BookOpen, MessageCircle, UserPlus, UserMinus } from 'lucide-react';
+import { API_URL } from '../config';
 
 const UserProfile = () => {
     const { id } = useParams();
@@ -26,7 +27,7 @@ const UserProfile = () => {
 
     const fetchUserProfile = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/users/${id}`);
+            const res = await axios.get(`${API_URL}/users/${id}`);
             setProfileUser(res.data);
             setFollowersCount(res.data.followers);
             setFollowingCount(res.data.following);
@@ -39,7 +40,7 @@ const UserProfile = () => {
 
     const fetchUserRecipes = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/users/${id}/recipes`);
+            const res = await axios.get(`${API_URL}/users/${id}/recipes`);
             setUserRecipes(res.data);
         } catch (err) {
             console.error('Failed to load recipes');
@@ -49,7 +50,7 @@ const UserProfile = () => {
     const checkIfFollowing = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:5000/api/users/${user._id}/following`, {
+            const res = await axios.get(`${API_URL}/users/${user._id}/following`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setIsFollowing(res.data.some(u => u.id === parseInt(id)));
@@ -66,7 +67,7 @@ const UserProfile = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:5000/api/users/${id}/follow`, {}, {
+            await axios.post(`${API_URL}/users/${id}/follow`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setIsFollowing(true);
@@ -79,7 +80,7 @@ const UserProfile = () => {
     const handleUnfollow = async () => {
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:5000/api/users/${id}/unfollow`, {
+            await axios.delete(`${API_URL}/users/${id}/unfollow`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setIsFollowing(false);
@@ -219,8 +220,8 @@ const UserProfile = () => {
                                     <div className="mt-3 flex items-center justify-between text-sm text-gray-500">
                                         <span>{recipe.cookTime ? `${recipe.cookTime} min` : 'N/A'}</span>
                                         <span className={`px-2 py-1 rounded text-xs font-medium ${recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
-                                                recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                                    'bg-red-100 text-red-800'
+                                            recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-red-100 text-red-800'
                                             }`}>
                                             {recipe.difficulty}
                                         </span>

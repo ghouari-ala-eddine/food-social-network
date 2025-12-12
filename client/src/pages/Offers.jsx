@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Tag, Clock, MapPin } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Offers = () => {
     const [offers, setOffers] = useState([]);
@@ -13,7 +14,7 @@ const Offers = () => {
 
     const fetchOffers = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/offers');
+            const res = await axios.get(`${API_URL}/offers`);
             console.log('Fetched offers:', res.data);
             setOffers(res.data);
         } catch (err) {

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { ArrowLeft, Send } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Chat = () => {
     const { userId } = useParams();
@@ -36,7 +37,7 @@ const Chat = () => {
 
     const fetchPartner = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/users/${userId}`);
+            const res = await axios.get(`${API_URL}/users/${userId}`);
             setPartner(res.data);
         } catch (err) {
             console.error('Failed to load user');
@@ -46,7 +47,7 @@ const Chat = () => {
     const fetchMessages = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get(`http://localhost:5000/api/messages/${userId}`, {
+            const res = await axios.get(`${API_URL}/messages/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessages(res.data);
@@ -63,7 +64,7 @@ const Chat = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/messages', {
+            await axios.post(`${API_URL}/messages`, {
                 receiverId: userId,
                 content: newMessage
             }, {
@@ -125,8 +126,8 @@ const Chat = () => {
                         >
                             <div
                                 className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.senderId === user._id
-                                        ? 'bg-orange-600 text-white'
-                                        : 'bg-white text-gray-900'
+                                    ? 'bg-orange-600 text-white'
+                                    : 'bg-white text-gray-900'
                                     }`}
                             >
                                 <p className="break-words">{message.content}</p>

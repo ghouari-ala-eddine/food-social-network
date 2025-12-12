@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { Plus, X } from 'lucide-react';
+import { API_URL } from '../config';
 
 const CreateRecipe = () => {
     const { user } = useContext(AuthContext);
@@ -45,7 +46,7 @@ const CreateRecipe = () => {
             const filteredIngredients = ingredients.filter(ing => ing.trim() !== '');
             const filteredInstructions = instructions.filter(inst => inst.trim() !== '');
 
-            await axios.post('http://localhost:5000/api/recipes', {
+            await axios.post(`${API_URL}/recipes`, {
                 title,
                 description,
                 ingredients: filteredIngredients,

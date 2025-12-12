@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { ArrowLeft, Save, Upload } from 'lucide-react';
+import { API_URL } from '../config';
 
 const EditProfile = () => {
     const { user, updateUser } = useContext(AuthContext);
@@ -40,7 +41,7 @@ const EditProfile = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.put('http://localhost:5000/api/auth/profile', {
+            const res = await axios.put(`${API_URL}/auth/profile`, {
                 username,
                 email,
                 bio,

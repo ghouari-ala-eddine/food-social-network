@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { Mail, Calendar, BookOpen, Edit } from 'lucide-react';
+import { API_URL } from '../config';
 
 const Profile = () => {
     const { user } = useContext(AuthContext);
@@ -23,7 +24,7 @@ const Profile = () => {
 
     const fetchUserRecipes = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/recipes');
+            const res = await axios.get(`${API_URL}/recipes`);
             const myRecipes = res.data.filter(recipe => recipe.author && recipe.author.id === user._id);
             setUserRecipes(myRecipes);
         } catch (err) {
@@ -35,7 +36,7 @@ const Profile = () => {
 
     const fetchFollowCounts = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/users/${user._id}`);
+            const res = await axios.get(`${API_URL}/users/${user._id}`);
             setFollowersCount(res.data.followers);
             setFollowingCount(res.data.following);
         } catch (err) {

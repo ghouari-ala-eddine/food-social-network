@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { MapPin, Star, Navigation, Loader } from 'lucide-react';
+import { API_URL } from '../config';
 
 const NearbyRestaurants = () => {
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ const NearbyRestaurants = () => {
     const fetchNearbyRestaurants = async (lat, lng, searchRadius) => {
         try {
             setLoading(true);
-            const res = await axios.get(`http://localhost:5000/api/location/nearby`, {
+            const res = await axios.get(`${API_URL}/location/nearby`, {
                 params: { lat, lng, radius: searchRadius }
             });
             setRestaurants(res.data);
