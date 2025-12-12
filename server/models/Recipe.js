@@ -1,10 +1,9 @@
-// In-memory recipe storage
-const recipes = [];
-let recipeIdCounter = 1;
+const storage = require('../utils/storage');
+
+const COLLECTION = 'recipes';
 
 class Recipe {
     constructor(data) {
-        this.id = recipeIdCounter++;
         this.title = data.title;
         this.description = data.description;
         this.ingredients = data.ingredients || [];
@@ -13,55 +12,40 @@ class Recipe {
         this.servings = data.servings;
         this.difficulty = data.difficulty || 'Medium';
         this.image = data.image || '';
-        this.author = data.author; // user ID
-        this.likes = []; // array of user IDs who liked this recipe
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.author = data.author;
+        this.likes = [];
+        this.createdAt = new Date().toISOString();
+        this.updatedAt = new Date().toISOString();
     }
 
     static async create(recipeData) {
         const recipe = new Recipe(recipeData);
-        recipes.push(recipe);
-        return recipe;
+        return storage.addItem(COLLECTION, recipe);
     }
 
     static async findAll() {
-        return recipes;
+        return storage.getAll(COLLECTION);
     }
 
     static async findById(id) {
-        return recipes.find(recipe => recipe.id === parseInt(id));
+        return storage.findById(COLLECTION, id);
     }
 
     static async findByAuthor(authorId) {
-        return recipes.filter(recipe => recipe.author === authorId);
+        return storage.findMany(COLLECTION, { author: authorId });
     }
 
     static async update(id, updateData) {
-        const index = recipes.findIndex(recipe => recipe.id === parseInt(id));
-        if (index === -1) return null;
-
-        recipes[index] = {
-            ...recipes[index],
-            ...updateData,
-            id: recipes[index].id,
-            author: recipes[index].author,
-            createdAt: recipes[index].createdAt,
-            updatedAt: new Date()
-        };
-        return recipes[index];
+        updateData.updatedAt = new Date().toISOString();
+        return storage.updateById(COLLECTION, id, updateData);
     }
 
     static async delete(id) {
-        const index = recipes.findIndex(recipe => recipe.id === parseInt(id));
-        if (index === -1) return null;
-
-        const deleted = recipes.splice(index, 1);
-        return deleted[0];
+        return storage.deleteById(COLLECTION, id);
     }
 
     static async toggleLike(recipeId, userId) {
-        const recipe = recipes.find(r => r.id === parseInt(recipeId));
+        const recipe = storage.findById(COLLECTION, recipeId);
         if (!recipe) return null;
 
         const likeIndex = recipe.likes.indexOf(userId);
@@ -70,11 +54,11 @@ class Recipe {
         } else {
             recipe.likes.splice(likeIndex, 1);
         }
-        return recipe;
+        return storage.updateById(COLLECTION, recipeId, { likes: recipe.likes });
     }
 
     static async isLikedByUser(recipeId, userId) {
-        const recipe = recipes.find(r => r.id === parseInt(recipeId));
+        const recipe = storage.findById(COLLECTION, recipeId);
         if (!recipe) return false;
         return recipe.likes.includes(userId);
     }

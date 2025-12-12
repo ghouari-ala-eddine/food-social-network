@@ -1,15 +1,14 @@
-// In-memory rating storage
-const ratings = [];
-let ratingIdCounter = 1;
+const storage = require('../utils/storage');
+
+const COLLECTION = 'ratings';
 
 class Rating {
     constructor(restaurantId, userId, rating, review) {
-        this.id = ratingIdCounter++;
         this.restaurantId = restaurantId;
         this.userId = userId;
-        this.rating = rating; // 1-5
+        this.rating = rating;
         this.review = review || '';
-        this.createdAt = new Date();
+        this.createdAt = new Date().toISOString();
     }
 
     static async create(ratingData) {
@@ -19,24 +18,26 @@ class Rating {
             ratingData.rating,
             ratingData.review
         );
-        ratings.push(rating);
-        return rating;
+        return storage.addItem(COLLECTION, rating);
     }
 
     static async findByRestaurant(restaurantId) {
-        return ratings.filter(r => r.restaurantId === restaurantId)
-            .sort((a, b) => b.createdAt - a.createdAt);
+        const ratings = storage.getAll(COLLECTION);
+        return ratings
+            .filter(r => r.restaurantId === restaurantId)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
     static async findByUser(userId) {
-        return ratings.filter(r => r.userId === userId);
+        return storage.findMany(COLLECTION, { userId });
     }
 
     static async findById(id) {
-        return ratings.find(r => r.id === id);
+        return storage.findById(COLLECTION, id);
     }
 
     static async getAverageRating(restaurantId) {
+        const ratings = storage.getAll(COLLECTION);
         const restaurantRatings = ratings.filter(r => r.restaurantId === restaurantId);
         if (restaurantRatings.length === 0) return 0;
 
@@ -45,12 +46,7 @@ class Rating {
     }
 
     static async delete(id) {
-        const index = ratings.findIndex(r => r.id === id);
-        if (index !== -1) {
-            ratings.splice(index, 1);
-            return true;
-        }
-        return false;
+        return storage.deleteById(COLLECTION, id) !== null;
     }
 }
 

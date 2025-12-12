@@ -1,15 +1,14 @@
-// In-memory message storage
-const messages = [];
-let messageIdCounter = 1;
+const storage = require('../utils/storage');
+
+const COLLECTION = 'messages';
 
 class Message {
     constructor(senderId, receiverId, content) {
-        this.id = messageIdCounter++;
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.content = content;
         this.read = false;
-        this.createdAt = new Date();
+        this.createdAt = new Date().toISOString();
     }
 
     static async create(messageData) {
@@ -18,23 +17,23 @@ class Message {
             messageData.receiverId,
             messageData.content
         );
-        messages.push(message);
-        return message;
+        return storage.addItem(COLLECTION, message);
     }
 
     static async findByUsers(userId1, userId2) {
+        const messages = storage.getAll(COLLECTION);
         return messages.filter(m =>
             (m.senderId === userId1 && m.receiverId === userId2) ||
             (m.senderId === userId2 && m.receiverId === userId1)
-        ).sort((a, b) => a.createdAt - b.createdAt);
+        ).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     }
 
     static async getConversations(userId) {
+        const messages = storage.getAll(COLLECTION);
         const userMessages = messages.filter(m =>
             m.senderId === userId || m.receiverId === userId
         );
 
-        // Group by conversation partner
         const conversationMap = new Map();
         userMessages.forEach(msg => {
             const partnerId = msg.senderId === userId ? msg.receiverId : msg.senderId;
@@ -44,7 +43,6 @@ class Message {
             conversationMap.get(partnerId).push(msg);
         });
 
-        // Get last message for each conversation
         const conversations = [];
         conversationMap.forEach((msgs, partnerId) => {
             const lastMessage = msgs[msgs.length - 1];
@@ -59,23 +57,19 @@ class Message {
         });
 
         return conversations.sort((a, b) =>
-            b.lastMessage.createdAt - a.lastMessage.createdAt
+            new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt)
         );
     }
 
     static async markAsRead(messageId) {
-        const message = messages.find(m => m.id === messageId);
-        if (message) {
-            message.read = true;
-            return message;
-        }
-        return null;
+        return storage.updateById(COLLECTION, messageId, { read: true });
     }
 
     static async markConversationAsRead(userId, partnerId) {
+        const messages = storage.getAll(COLLECTION);
         messages.forEach(m => {
             if (m.senderId === partnerId && m.receiverId === userId) {
-                m.read = true;
+                storage.updateById(COLLECTION, m.id, { read: true });
             }
         });
     }

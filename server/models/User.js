@@ -1,14 +1,13 @@
-// In-memory user storage (for development without MongoDB)
-const users = [];
-let userIdCounter = 1;
+const storage = require('../utils/storage');
+
+const COLLECTION = 'users';
 
 class User {
     constructor(username, email, password, accountType = 'user') {
-        this.id = userIdCounter++;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.accountType = accountType; // 'user' or 'restaurant'
+        this.accountType = accountType;
         this.profilePicture = '';
         this.bio = '';
         this.followers = [];
@@ -19,14 +18,14 @@ class User {
         this.description = '';
         this.address = '';
         this.phone = '';
-        this.location = null; // { lat, lng }
+        this.location = null;
         this.openingHours = '';
-        this.cuisine = []; // array of cuisine types
+        this.cuisine = [];
         this.averageRating = 0;
         this.totalRatings = 0;
 
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.createdAt = new Date().toISOString();
+        this.updatedAt = new Date().toISOString();
     }
 
     static async create(userData) {
@@ -36,39 +35,24 @@ class User {
             userData.password,
             userData.accountType || 'user'
         );
-        users.push(user);
-        return user;
+        return storage.addItem(COLLECTION, user);
     }
 
     static async findOne(query) {
-        return users.find(user => {
-            if (query.email) return user.email === query.email;
-            if (query.username) return user.username === query.username;
-            if (query.id) return user.id === query.id;
-            return false;
-        });
+        return storage.findOne(COLLECTION, query);
     }
 
     static async findById(id) {
-        return users.find(user => user.id === id);
+        return storage.findById(COLLECTION, id);
     }
 
     static async update(id, updates) {
-        console.log(`User.update called for ID: ${id} with updates:`, updates);
-        const user = users.find(user => user.id === id);
-        if (user) {
-            console.log('User found before update:', JSON.stringify(user));
-            Object.assign(user, updates);
-            user.updatedAt = new Date();
-            console.log('User after update:', JSON.stringify(user));
-            return user;
-        }
-        console.log('User NOT found for update!');
-        return null;
+        updates.updatedAt = new Date().toISOString();
+        return storage.updateById(COLLECTION, id, updates);
     }
 
     static async getAll() {
-        return users;
+        return storage.getAll(COLLECTION);
     }
 }
 

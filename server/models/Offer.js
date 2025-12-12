@@ -1,17 +1,16 @@
-// In-memory offer storage
-const offers = [];
-let offerIdCounter = 1;
+const storage = require('../utils/storage');
+
+const COLLECTION = 'offers';
 
 class Offer {
     constructor(restaurantId, title, description, discount, validUntil, image) {
-        this.id = offerIdCounter++;
         this.restaurantId = restaurantId;
         this.title = title;
         this.description = description;
-        this.discount = discount; // percentage or amount
+        this.discount = discount;
         this.validUntil = validUntil;
         this.image = image || '';
-        this.createdAt = new Date();
+        this.createdAt = new Date().toISOString();
     }
 
     static async create(offerData) {
@@ -23,30 +22,25 @@ class Offer {
             offerData.validUntil,
             offerData.image
         );
-        offers.push(offer);
-        return offer;
+        return storage.addItem(COLLECTION, offer);
     }
 
     static async getActive() {
+        const offers = storage.getAll(COLLECTION);
         const now = new Date();
         return offers.filter(offer => new Date(offer.validUntil) > now);
     }
 
     static async findByRestaurant(restaurantId) {
-        return offers.filter(offer => offer.restaurantId === restaurantId);
+        return storage.findMany(COLLECTION, { restaurantId });
     }
 
     static async findById(id) {
-        return offers.find(offer => offer.id === id);
+        return storage.findById(COLLECTION, id);
     }
 
     static async delete(id) {
-        const index = offers.findIndex(offer => offer.id === id);
-        if (index !== -1) {
-            offers.splice(index, 1);
-            return true;
-        }
-        return false;
+        return storage.deleteById(COLLECTION, id) !== null;
     }
 }
 

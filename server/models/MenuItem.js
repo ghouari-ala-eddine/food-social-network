@@ -1,19 +1,18 @@
-// In-memory menu item storage
-const menuItems = [];
-let menuItemIdCounter = 1;
+const storage = require('../utils/storage');
+
+const COLLECTION = 'menuitems';
 
 class MenuItem {
     constructor(restaurantId, name, description, price, category, image) {
-        this.id = menuItemIdCounter++;
         this.restaurantId = restaurantId;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.category = category; // 'appetizer', 'main', 'dessert', 'drink', etc.
+        this.category = category;
         this.image = image || '';
         this.available = true;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.createdAt = new Date().toISOString();
+        this.updatedAt = new Date().toISOString();
     }
 
     static async create(itemData) {
@@ -25,35 +24,24 @@ class MenuItem {
             itemData.category,
             itemData.image
         );
-        menuItems.push(item);
-        return item;
+        return storage.addItem(COLLECTION, item);
     }
 
     static async findByRestaurant(restaurantId) {
-        return menuItems.filter(item => item.restaurantId === restaurantId);
+        return storage.findMany(COLLECTION, { restaurantId });
     }
 
     static async findById(id) {
-        return menuItems.find(item => item.id === id);
+        return storage.findById(COLLECTION, id);
     }
 
     static async update(id, updates) {
-        const item = menuItems.find(item => item.id === id);
-        if (item) {
-            Object.assign(item, updates);
-            item.updatedAt = new Date();
-            return item;
-        }
-        return null;
+        updates.updatedAt = new Date().toISOString();
+        return storage.updateById(COLLECTION, id, updates);
     }
 
     static async delete(id) {
-        const index = menuItems.findIndex(item => item.id === id);
-        if (index !== -1) {
-            menuItems.splice(index, 1);
-            return true;
-        }
-        return false;
+        return storage.deleteById(COLLECTION, id) !== null;
     }
 }
 

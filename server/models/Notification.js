@@ -1,17 +1,16 @@
-// In-memory notification storage
-const notifications = [];
-let notificationIdCounter = 1;
+const storage = require('../utils/storage');
+
+const COLLECTION = 'notifications';
 
 class Notification {
     constructor(userId, type, fromUserId, message, link = null) {
-        this.id = notificationIdCounter++;
         this.userId = userId;
-        this.type = type; // 'follow', 'message', 'like', 'comment', 'reservation', 'reservation_confirmed'
+        this.type = type;
         this.fromUserId = fromUserId;
         this.message = message;
-        this.link = link; // URL to navigate to when clicked
+        this.link = link;
         this.read = false;
-        this.createdAt = new Date();
+        this.createdAt = new Date().toISOString();
     }
 
     static async create(notificationData) {
@@ -22,32 +21,31 @@ class Notification {
             notificationData.message,
             notificationData.link
         );
-        notifications.push(notification);
-        return notification;
+        return storage.addItem(COLLECTION, notification);
     }
 
     static async findByUser(userId) {
-        return notifications.filter(n => n.userId === userId).sort((a, b) => b.createdAt - a.createdAt);
+        const notifications = storage.getAll(COLLECTION);
+        return notifications
+            .filter(n => n.userId === userId)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
     static async markAsRead(id) {
-        const notification = notifications.find(n => n.id === id);
-        if (notification) {
-            notification.read = true;
-            return notification;
-        }
-        return null;
+        return storage.updateById(COLLECTION, id, { read: true });
     }
 
     static async markAllAsRead(userId) {
+        const notifications = storage.getAll(COLLECTION);
         notifications.forEach(n => {
             if (n.userId === userId) {
-                n.read = true;
+                storage.updateById(COLLECTION, n.id, { read: true });
             }
         });
     }
 
     static async getUnreadCount(userId) {
+        const notifications = storage.getAll(COLLECTION);
         return notifications.filter(n => n.userId === userId && !n.read).length;
     }
 }
