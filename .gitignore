@@ -4,3 +4,4 @@ server/node_modules
 .env
 client/dist
 .DS_Store
+# Keep server/data for persistence
