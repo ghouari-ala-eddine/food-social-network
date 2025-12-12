@@ -163,7 +163,11 @@ const Navbar = () => {
                                 <Link to="/messages" className="block text-gray-600 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium">Messages</Link>
                                 <Link to="/notifications" className="block text-gray-600 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium">Notifications</Link>
                                 <Link to="/profile" className="block text-gray-600 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium">Profile</Link>
-                                <Link to="/recipes/create" className="block text-gray-600 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium">Create Recipe</Link>
+                                {user.accountType === 'restaurant' ? (
+                                    <Link to="/restaurant-dashboard" className="block text-gray-600 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium">Dashboard</Link>
+                                ) : (
+                                    <Link to="/recipes/create" className="block text-gray-600 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium">Create Recipe</Link>
+                                )}
                                 <button
                                     onClick={handleLogout}
                                     className="w-full text-left text-gray-600 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium"
