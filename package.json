@@ -1,0 +1,19 @@
+{
+    "name": "food-network-app",
+    "version": "1.0.0",
+    "description": "Food Network Full Stack App",
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "scripts": {
+        "build": "npm install --prefix client && npm run build --prefix client && npm install --prefix server",
+        "start": "npm start --prefix server",
+        "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "concurrently": "^8.0.0"
+    }
+}
