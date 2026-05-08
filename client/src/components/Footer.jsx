@@ -6,8 +6,8 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="mb-4 md:mb-0">
-                        <span className="text-lg font-bold">FoodNetwork</span>
-                        <p className="text-sm text-gray-400">© 2025 Food Network. All rights reserved.</p>
+                        <span className="text-lg font-bold">Maklatna</span>
+                        <p className="text-sm text-gray-400">© 2025 Maklatna. All rights reserved.</p>
                     </div>
                     <div className="flex space-x-6">
                         <a href="#" className="text-gray-400 hover:text-white">About</a>

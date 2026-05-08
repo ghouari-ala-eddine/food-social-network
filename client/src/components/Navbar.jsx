@@ -45,7 +45,7 @@ const Navbar = () => {
                     <div className="flex items-center">
                         <Link to="/" className="flex-shrink-0 flex items-center">
                             <ChefHat className="h-8 w-8 text-orange-500" />
-                            <span className="ml-2 text-xl font-bold text-gray-800">FoodNetwork</span>
+                            <span className="ml-2 text-xl font-bold text-gray-800">Maklatna</span>
                         </Link>
                     </div>
 
